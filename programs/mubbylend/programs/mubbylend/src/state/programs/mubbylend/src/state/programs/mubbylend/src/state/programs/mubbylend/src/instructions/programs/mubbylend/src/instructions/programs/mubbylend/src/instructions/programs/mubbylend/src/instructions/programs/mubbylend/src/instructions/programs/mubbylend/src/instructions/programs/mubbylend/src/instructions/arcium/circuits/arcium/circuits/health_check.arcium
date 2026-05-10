@@ -1,0 +1,14 @@
+circuit health_check(
+    secret collateral_value: u64,
+    secret total_debt: u64,
+    secret liquidation_threshold_bps: u64,
+) -> (public is_healthy: bool) {
+
+    // Compute health factor privately
+    // Health Factor = (collateral * liquidation_threshold) / total_debt
+    let weighted_collateral = collateral_value * liquidation_threshold_bps / 10000;
+
+    // Only the boolean is revealed — never the exact health factor
+    // Liquidation bots cannot watch a specific threshold value
+    is_healthy = weighted_collateral > total_debt;
+}
