@@ -1,0 +1,14 @@
+circuit ltv_check(
+    secret collateral_value: u64,
+    secret borrow_amount: u64,
+    public max_ltv_bps: u64,
+) -> (public is_within_ltv: bool) {
+
+    // Compute LTV ratio privately
+    // LTV = borrow / collateral * 10000 (in basis points)
+    let ltv_bps = borrow_amount * 10000 / collateral_value;
+
+    // Only this boolean crosses the privacy boundary
+    // Liquidators and observers never learn the actual LTV number
+    is_within_ltv = ltv_bps <= max_ltv_bps;
+}
