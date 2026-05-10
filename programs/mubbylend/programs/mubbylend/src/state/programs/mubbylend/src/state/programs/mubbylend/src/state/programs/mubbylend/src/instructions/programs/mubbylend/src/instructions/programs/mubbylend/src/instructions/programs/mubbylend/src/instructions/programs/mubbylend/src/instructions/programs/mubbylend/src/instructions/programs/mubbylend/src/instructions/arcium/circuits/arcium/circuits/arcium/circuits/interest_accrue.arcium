@@ -1,0 +1,15 @@
+circuit interest_accrue(
+    secret principal: u64,
+    secret rate_bps: u64,
+    public time_elapsed_slots: u64,
+) -> (public interest_owed: u64) {
+
+    // Compute interest privately
+    // Interest = principal * rate * time / slots_per_year
+    let slots_per_year = 78840000u64; // ~2.5 slots/sec * 365 days
+    let annual_interest = principal * rate_bps / 10000;
+    
+    // Only the final interest amount is revealed for settlement
+    // The principal itself remains hidden throughout
+    interest_owed = annual_interest * time_elapsed_slots / slots_per_year;
+}
