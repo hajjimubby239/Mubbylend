@@ -1,0 +1,20 @@
+circuit liquidation_check(
+    secret collateral_value: u64,
+    secret total_debt: u64,
+    secret liquidation_bonus_bps: u64,
+) -> (public is_liquidatable: bool, public liquidation_reward: u64) {
+
+    // Compute health factor privately
+    let health_factor = collateral_value * 10000 / total_debt;
+
+    // Position is liquidatable if health factor drops below 10000 (1.0)
+    is_liquidatable = health_factor < 10000u64;
+
+    // Liquidator reward — revealed only if liquidatable
+    // Borrower's exact collateral breakdown stays private
+    liquidation_reward = if is_liquidatable {
+        total_debt * liquidation_bonus_bps / 10000
+    } else {
+        0u64
+    };
+}
